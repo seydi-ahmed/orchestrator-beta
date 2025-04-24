@@ -1,6 +1,12 @@
+from waitress import serve
 from app import create_app
 
-app = create_app()
+import os
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080)
+
+PORT = os.getenv("INVENTORY_APP_PORT")
+
+app = create_app()
+print(f"Listening on port {PORT}...")
+
+serve(app, listen=f"*:{PORT}")

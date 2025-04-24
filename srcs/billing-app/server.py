@@ -1,11 +1,22 @@
+from app.consume_queue import consume_and_store_order
+from app.orders import Base
+
+from sqlalchemy import create_engine
+
 import os
-import sys
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), ".", "..")))
 
-from app import create_app
+BILLING_DB_USER = os.getenv("BILLING_DB_USER")
+BILLING_DB_PASSWORD = os.getenv("BILLING_DB_PASSWORD")
+BILLING_DB_NAME = os.getenv("BILLING_DB_NAME")
 
-app = create_app()
+DB_URI = (
+    "postgresql://"
+    f'{BILLING_DB_USER}:{BILLING_DB_PASSWORD}'
+    f'@billing-db:5432/{BILLING_DB_NAME}'
+)
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080)
+engine = create_engine(DB_URI)
+Base.metadata.create_all(engine)
+
+consume_and_store_order(engine)
