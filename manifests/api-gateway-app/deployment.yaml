@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+  labels:
+    app: api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+        - name: api-gateway
+          image: mouhameddiouf01/api-gateway:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: APIGATEWAY_PORT
+              value: "3000"
+            - name: INVENTORY_APP_HOST
+              value: inventory-app
+            - name: BILLING_APP_HOST
+              value: billing-app
+            - name: RABBITMQ_HOST
+              value: rabbitmq

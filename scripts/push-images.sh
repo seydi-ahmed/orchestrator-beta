@@ -1,9 +1,17 @@
 # scripts/push-images.sh
 #!/bin/bash
+
 set -e
 
-IMAGES=(inventory-app billing-app api-gateway-app rabbitmq postgres-db)
-for IMAGE in "${IMAGES[@]}"; do
-  echo "Pushing $IMAGE..."
-  docker push monuser/$IMAGE:latest
-done
+echo "[+] Pushing Docker images to Docker Hub..."
+
+docker push mouhameddiouf01/inventory-app:latest
+docker push mouhameddiouf01/billing-app:latest
+docker push mouhameddiouf01/api-gateway:latest
+docker push mouhameddiouf01/postgres-db:latest
+docker push mouhameddiouf01/rabbitmq:latest
+
+# mako fi yokeu
+docker push mouhameddiouf01/api-gateway-app:latest
+
+echo "[✓] All images pushed to Docker Hub."
