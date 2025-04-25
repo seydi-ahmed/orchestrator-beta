@@ -39,6 +39,3 @@ spec:
                 secretKeyRef:
                   name: inventory-db-secret
                   key: dbname
-            - name: INVENTORY_DB_HOST
-              value: "inventory-db"
-

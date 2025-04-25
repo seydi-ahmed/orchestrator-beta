@@ -30,3 +30,6 @@ spec:
               value: billing-app
             - name: RABBITMQ_HOST
               value: rabbitmq
+            - name: INVENTORY_APP_PORT
+              value: "8080"
+

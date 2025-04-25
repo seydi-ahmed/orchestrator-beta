@@ -98,4 +98,24 @@
 1) utiliser kubectl sans sudo
 - sudo chmod 644 /etc/rancher/k3s/k3s.yaml
 - export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
-2) déplouter
+2) déployer
+- /vagrant/scripts/./deploy-all.sh
+3) erreur
+```
+# Désinstaller Nginx Ingress (nettoyage)
+kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.9.4/deploy/static/provider/kind/deploy.yaml
+
+# Désactiver Traefik avant de réinstaller Nginx Ingress
+curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--disable traefik" sh -s -
+
+# Réinstaller Nginx Ingress
+sudo kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+```
+
+
+## tu viens de le lister quelques étapes:
+1) Manque de ressources dans le cluster (CPU, mémoire).
+2) Problèmes de scheduling : cela peut se produire si Kubernetes ne trouve pas de nœud approprié pour déployer le pod.
+3) Vérification des événements du cluster
+4) Examiner les ressources disponibles sur le nœud
+5) Regarder les logs du pod
