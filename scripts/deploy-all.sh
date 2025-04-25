@@ -14,7 +14,7 @@ echo "[~] Waiting for ingress controller pod to be ready..."
 kubectl wait --namespace ingress-nginx \
   --for=condition=Ready pod \
   --selector=app.kubernetes.io/component=controller \
-  --timeout=30s
+  --timeout=120s
 
 # 2. Deploy all secrets
 kubectl apply -f /vagrant/manifests/secrets/
