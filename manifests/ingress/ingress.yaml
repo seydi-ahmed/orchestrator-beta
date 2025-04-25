@@ -1,15 +1,17 @@
+# ./manifests/ingress/ingress.yaml
+
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: api-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   rules:
     - host: localhost
       http:
         paths:
-          - path: /
+          - path: /api(/|$)(.*)
             pathType: Prefix
             backend:
               service:

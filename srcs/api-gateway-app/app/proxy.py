@@ -1,3 +1,5 @@
+# ./srcs/api-gateway-app/app/proxy.py
+
 from flask import Blueprint, request, jsonify
 
 import os
