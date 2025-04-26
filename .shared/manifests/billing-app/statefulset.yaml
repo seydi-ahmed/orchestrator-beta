@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: billing-app
+spec:
+  selector:
+    matchLabels:
+      app: billing-app
+  serviceName: billing-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: billing-app
+    spec:
+      containers:
+        - name: billing-app
+          image: mouhameddiouf01/billing-app:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: BILLING_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: billing-db-secret
+                  key: username
+            - name: BILLING_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: billing-db-secret
+                  key: password
+            - name: BILLING_DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: billing-db-secret
+                  key: dbname
+            - name: RABBITMQ_USER
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-secret
+                  key: username
+            - name: RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-secret
+                  key: password
+            - name: RABBITMQ_QUEUE
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-secret
+                  key: queue

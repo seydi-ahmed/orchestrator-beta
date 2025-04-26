@@ -1,3 +1,5 @@
+# ./orchestrator.sh
+
 #!/bin/bash
 
 set -e
@@ -10,7 +12,9 @@ case "$1" in
     mkdir -p ~/.kube
     vagrant ssh master -c "sudo cat /etc/rancher/k3s/k3s.yaml" > ~/.kube/config
     sed -i 's/127.0.0.1/192.168.56.10/' ~/.kube/config
-    echo "[✓] Cluster created"
+    echo "[+] Deploying applications..."
+    vagrant ssh master -c "cd /shared && ./scripts/deploy-all.sh"
+    echo "[✓] Cluster created and deployed"
     ;;
   start)
     echo "[+] Starting cluster..."
