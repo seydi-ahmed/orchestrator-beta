@@ -1,37 +1,12 @@
 # ./manifests/ingress/ingress.yaml
 
-# apiVersion: networking.k8s.io/v1
-# kind: Ingress
-# metadata:
-#   name: api-ingress
-#   annotations:
-#     nginx.ingress.kubernetes.io/rewrite-target: /$2
-# spec:
-#   rules:
-#     - host: localhost
-#       http:
-#         paths:
-#           - path: /api(/|$)(.*)
-#             pathType: Prefix
-#             backend:
-#               service:
-#                 name: api-gateway
-#                 port:
-#                   number: 3000
-
-
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: api-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
-    nginx.ingress.kubernetes.io/enable-cors: "true"
-    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, PUT, POST, DELETE, OPTIONS"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
 spec:
-  ingressClassName: nginx
   rules:
     - host: localhost
       http:
@@ -41,5 +16,30 @@ spec:
             backend:
               service:
                 name: api-gateway
-                port: 
+                port:
                   number: 3000
+
+
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: api-ingress
+#   annotations:
+#     nginx.ingress.kubernetes.io/rewrite-target: /$2
+#     nginx.ingress.kubernetes.io/enable-cors: "true"
+#     nginx.ingress.kubernetes.io/cors-allow-methods: "GET, PUT, POST, DELETE, OPTIONS"
+#     nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+#     nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+# spec:
+#   ingressClassName: nginx
+#   rules:
+#     - host: localhost
+#       http:
+#         paths:
+#           - path: /api(/|$)(.*)
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: api-gateway
+#                 port: 
+#                   number: 3000

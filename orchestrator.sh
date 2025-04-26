@@ -1,38 +1,44 @@
-# ./orchestrator.sh
-
 #!/bin/bash
 
-set -e
-
-case "$1" in
+case $1 in
   create)
-    echo "[+] Creating K3s cluster..."
     vagrant up
-    echo "[+] Copying kubeconfig..."
-    mkdir -p ~/.kube
-    vagrant ssh master -c "sudo cat /etc/rancher/k3s/k3s.yaml" > ~/.kube/config
-    sed -i 's/127.0.0.1/192.168.56.10/' ~/.kube/config
-    echo "[+] Deploying applications..."
-    vagrant ssh master -c "cd /shared && ./scripts/deploy-all.sh"
-    echo "[✓] Cluster created and deployed"
+    echo "cluster created"
     ;;
+
   start)
-    echo "[+] Starting cluster..."
     vagrant up
+    echo "cluster started"
     ;;
+
   stop)
-    echo "[+] Stopping cluster..."
     vagrant halt
+    echo "cluster stopped"
     ;;
+
   destroy)
-    echo "[!] Destroying cluster..."
     vagrant destroy -f
+    echo "cluster destroyed"
     ;;
+
   status)
-    echo "[i] Cluster status:"
     vagrant status
     ;;
+
+  build)
+    ./scripts/build-images.sh
+    ;;
+
+  push)
+    ./scripts/push-images.sh
+    ;;
+
+  deploy)
+    ./scripts/deploy-all.sh
+    ;;
+
   *)
-    echo "Usage: ./orchestrator.sh {create|start|stop|destroy|status}"
+    echo "Usage: $0 {create|start|stop|destroy|status|build|push|deploy}"
+    exit 1
     ;;
 esac
