@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#!/bin/bash
+# ./scripts/deply-all.sh
 
 set -e
 

@@ -128,6 +128,9 @@ kubectl delete validatingwebhookconfiguration ingress-nginx-admission
 kubectl delete clusterrole ingress-nginx ingress-nginx-admission
 kubectl delete clusterrolebinding ingress-nginx ingress-nginx-admission
 ```
+```
+kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.9.4/deploy/static/provider/kind/deploy.yaml
+```
 
 ## Vérifier que tout est bien supprimé
 1) kubectl get all -n ingress-nginx
