@@ -59,14 +59,17 @@ master_script = <<-SHELL
     done' || echo "Timeout waiting for token"
     
     # Copy configuration files
-    cp /var/lib/rancher/k3s/server/token /vagrant_shared
+    
+    cp /var/lib/rancher/k3s/server/token /vagrant
     chmod 644 /etc/rancher/k3s/k3s.yaml
-    cp /etc/rancher/k3s/k3s.yaml /vagrant_shared
+    cp /etc/rancher/k3s/k3s.yaml /vagrant
+
     
     echo "=== K3s Installation Complete ==="
     kubectl get nodes -o wide
 SHELL
 
+# Modifiez la partie agent_script comme suit :
 agent_script = <<-SHELL
     sudo -i
     
@@ -76,22 +79,51 @@ agent_script = <<-SHELL
     
     # Install dependencies
     apt-get update
-    apt-get install -y curl iptables iproute2
+    apt-get install -y curl iptables iproute2 net-tools jq
     
-    # Wait for master to be ready
+    # Network checks
+    echo "=== Network Configuration ==="
+    ip -4 a show enp0s8 | grep inet
+    ip route
+    ping -c 3 #{master_ip} || echo "Ping failed"
+    
+    # Disable firewall
+    ufw disable
+    iptables -F
+    iptables -X
+    
+    # Wait for master token (using correct shared folder path)
     echo "Waiting for master token file..."
-    until [ -f /vagrant_shared/token ]; do
+    until [ -f /vagrant/token ]; do
+      echo "Token not found, checking master connectivity..."
+      if ! ping -c 3 #{master_ip}; then
+        echo "ERROR: Cannot reach master at #{master_ip}"
+        exit 1
+      fi
       sleep 5
     done
     
-    # Join cluster
-    export K3S_TOKEN_FILE=/vagrant_shared/token
+    # Verify token content
+    echo "Token content:"
+    cat /vagrant/token
+    
+    # Join cluster with retry logic
+    export K3S_TOKEN=$(cat /vagrant/token)
     export K3S_URL=https://#{master_ip}:6443
     export INSTALL_K3S_EXEC="--flannel-iface=enp0s8 --node-ip=#{agent_ip}"
     
-    curl -sfL https://get.k3s.io | sh -
+    echo "=== Joining cluster ==="
+    echo "K3S_URL=${K3S_URL}"
+    echo "NODE_IP=#{agent_ip}"
+    
+    for i in {1..5}; do
+      echo "Attempt $i to join cluster..."
+      curl -sfL https://get.k3s.io | sh - && break
+      sleep 10
+    done
     
     echo "=== Agent Installation Complete ==="
+    systemctl status k3s-agent || journalctl -u k3s-agent -xe
 SHELL
 
 Vagrant.configure("2") do |config|
@@ -101,7 +133,10 @@ Vagrant.configure("2") do |config|
   # Master configuration
   config.vm.define "master", primary: true do |master|
     master.vm.network "private_network", ip: master_ip, auto_config: true
-    master.vm.synced_folder ".", "/vagrant_shared", mount_options: ["dmode=777,fmode=666"]
+    # Remplacez cette ligne:
+    # master.vm.synced_folder ".", "/vagrant_shared", mount_options: ["dmode=777,fmode=666"]
+    # Par cette ligne:
+    master.vm.synced_folder ".", "/vagrant", mount_options: ["dmode=777,fmode=666"]
     master.vm.hostname = "master"
     master.vm.provider "virtualbox" do |vb|
       vb.memory = "4096"
@@ -112,7 +147,7 @@ Vagrant.configure("2") do |config|
     master.vm.provision "shell", inline: master_script
   end
 
-  # Agent configuration
+  # Agent configuration reste inchangé
   config.vm.define "agent" do |agent|
     agent.vm.network "private_network", ip: agent_ip, auto_config: true
     agent.vm.hostname = "agent"

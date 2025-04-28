@@ -119,3 +119,15 @@ sudo kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx
 3) Vérification des événements du cluster
 4) Examiner les ressources disponibles sur le nœud
 5) Regarder les logs du pod
+
+## Supprimer manuellement les ressources restantes
+```
+kubectl delete namespace ingress-nginx
+kubectl delete ingressclass nginx
+kubectl delete validatingwebhookconfiguration ingress-nginx-admission
+kubectl delete clusterrole ingress-nginx ingress-nginx-admission
+kubectl delete clusterrolebinding ingress-nginx ingress-nginx-admission
+```
+
+## Vérifier que tout est bien supprimé
+1) kubectl get all -n ingress-nginx

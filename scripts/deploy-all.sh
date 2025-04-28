@@ -1,4 +1,4 @@
-# ./scripts/deploy-all.sh
+#!/bin/bash
 
 #!/bin/bash
 
