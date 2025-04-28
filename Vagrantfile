@@ -4,82 +4,123 @@
 master_ip = "192.168.56.10"
 agent_ip = "192.168.56.11"
 
-# Extra parameters in INSTALL_K3S_EXEC variable because of
-# K3s picking up the wrong interface when starting server and agent
-# https://github.com/alexellis/k3sup/issues/306
-
 master_script = <<-SHELL
     sudo -i
+    
+    # Configure DNS to use Cloudflare for better reliability
+    echo "nameserver 1.1.1.1" > /etc/resolv.conf
+    echo "nameserver 8.8.8.8" >> /etc/resolv.conf
+    
+    # Update system and install dependencies
     apt-get update
-    apt-get install -y curl iptables iproute2 net-tools
+    apt-get install -y curl iptables iproute2 net-tools jq
     
-    # Disable firewall temporarily
+    # Network configuration checks
+    echo "=== Network Configuration ==="
+    ip -4 a show enp0s8 | grep inet
+    ip route
+    ping -c 3 #{master_ip} -I enp0s8 || echo "Ping failed"
+    
+    # Disable firewall and clear iptables
     ufw disable
-    
-    # Clear any existing iptables rules
     iptables -F
     iptables -X
     
-    # Verify network interfaces
-    echo "Network interfaces:"
-    ip a
-    echo "Routing table:"
-    ip route
-    
-    export INSTALL_K3S_EXEC="--disable=traefik --bind-address=#{master_ip} \
+    # Install K3s with specific version and debug options
+    export INSTALL_K3S_VERSION="v1.28.5+k3s1"  # Using a known stable version
+    export INSTALL_K3S_EXEC="--disable=traefik \
+      --bind-address=#{master_ip} \
       --node-external-ip=#{master_ip} \
-      --flannel-iface=eth1 \
+      --flannel-iface=enp0s8 \
       --write-kubeconfig-mode=644 \
-      --tls-san=#{master_ip}"
+      --tls-san=#{master_ip} \
+      --node-ip=#{master_ip} \
+      --advertise-address=#{master_ip}"
     
-    curl -sfL https://get.k3s.io | sh -s - --debug
+    echo "=== Installing K3s with command ==="
+    echo "INSTALL_K3S_EXEC=${INSTALL_K3S_EXEC}"
     
-    echo "Checking K3s service status..."
-    systemctl status k3s.service || journalctl -u k3s.service -xe
-    
-    echo "Waiting for K3s server to be ready..."
-    until [ -f /var/lib/rancher/k3s/server/token ]; do
-      sleep 2
+    # Download and install with retry logic
+    for i in {1..5}; do
+      echo "Attempt $i to install K3s..."
+      curl -sfL https://get.k3s.io | sh -s - --debug && break
+      sleep 10
     done
     
+    # Check service status
+    echo "=== K3s Service Status ==="
+    systemctl status k3s.service || journalctl -u k3s.service -xe
+    
+    # Wait for K3s to be ready with timeout
+    timeout 120 bash -c 'until [ -f /var/lib/rancher/k3s/server/token ]; do
+      echo "Waiting for K3s token..."
+      systemctl status k3s.service || journalctl -u k3s.service -xe
+      sleep 5
+    done' || echo "Timeout waiting for token"
+    
+    # Copy configuration files
     cp /var/lib/rancher/k3s/server/token /vagrant_shared
     chmod 644 /etc/rancher/k3s/k3s.yaml
     cp /etc/rancher/k3s/k3s.yaml /vagrant_shared
-    cp /etc/rancher/k3s/k3s.yaml /
+    
+    echo "=== K3s Installation Complete ==="
+    kubectl get nodes -o wide
 SHELL
 
 agent_script = <<-SHELL
     sudo -i
+    
+    # Configure DNS
+    echo "nameserver 1.1.1.1" > /etc/resolv.conf
+    echo "nameserver 8.8.8.8" >> /etc/resolv.conf
+    
+    # Install dependencies
     apt-get update
     apt-get install -y curl iptables iproute2
+    
+    # Wait for master to be ready
+    echo "Waiting for master token file..."
+    until [ -f /vagrant_shared/token ]; do
+      sleep 5
+    done
+    
+    # Join cluster
     export K3S_TOKEN_FILE=/vagrant_shared/token
     export K3S_URL=https://#{master_ip}:6443
-    export INSTALL_K3S_EXEC="--flannel-iface=eth1"
+    export INSTALL_K3S_EXEC="--flannel-iface=enp0s8 --node-ip=#{agent_ip}"
+    
     curl -sfL https://get.k3s.io | sh -
+    
+    echo "=== Agent Installation Complete ==="
 SHELL
 
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/focal64"
+  config.vm.box_check_update = false
 
-  # Configuration de la machine master
+  # Master configuration
   config.vm.define "master", primary: true do |master|
-    master.vm.network "private_network", ip: master_ip
-    master.vm.synced_folder ".", "/vagrant_shared"
+    master.vm.network "private_network", ip: master_ip, auto_config: true
+    master.vm.synced_folder ".", "/vagrant_shared", mount_options: ["dmode=777,fmode=666"]
     master.vm.hostname = "master"
     master.vm.provider "virtualbox" do |vb|
       vb.memory = "4096"
       vb.cpus = "2"
+      vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
+      vb.customize ["modifyvm", :id, "--nictype2", "virtio"]
     end
     master.vm.provision "shell", inline: master_script
   end
 
-  # Configuration de la machine agent
+  # Agent configuration
   config.vm.define "agent" do |agent|
-    agent.vm.network "private_network", ip: agent_ip
+    agent.vm.network "private_network", ip: agent_ip, auto_config: true
     agent.vm.hostname = "agent"
     agent.vm.provider "virtualbox" do |vb|
-      vb.memory = "1024"
+      vb.memory = "2048"
       vb.cpus = "1"
+      vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
+      vb.customize ["modifyvm", :id, "--nictype2", "virtio"]
     end
     agent.vm.provision "shell", inline: agent_script, run: "always"
   end
