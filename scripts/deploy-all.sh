@@ -23,6 +23,6 @@ kubectl apply -f /vagrant/manifests/billing-app/
 kubectl apply -f /vagrant/manifests/inventory-app/
 kubectl apply -f /vagrant/manifests/rabbitmq/
 kubectl apply -f /vagrant/manifests/api-gateway-app/
-kubectl apply -f /vagrant/manifests/ingress/ingress.yaml
+kubectl apply -f /vagrant/manifests/ingress/
 
 echo "[✓] All resources deployed to K3s cluster."
