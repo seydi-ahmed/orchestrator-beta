@@ -1,3 +1,5 @@
+# ./manifests/databases/billing-db.yaml
+
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -19,17 +21,17 @@ spec:
           ports:
             - containerPort: 5432
           env:
-            - name: POSTGRES_USER
+            - name: BILLING_DB_USER
               valueFrom:
                 secretKeyRef:
                   name: billing-db-secret
                   key: username
-            - name: POSTGRES_PASSWORD
+            - name: BILLING_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: billing-db-secret
                   key: password
-            - name: POSTGRES_DB
+            - name: BILLING_DB_NAME
               valueFrom:
                 secretKeyRef:
                   name: billing-db-secret
