@@ -134,3 +134,7 @@ kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/con
 
 ## Vérifier que tout est bien supprimé
 1) kubectl get all -n ingress-nginx
+
+## Aprés le démarrage de master
+1) supprimer les pods pour les permettre de bien redémarrer
+2) 
