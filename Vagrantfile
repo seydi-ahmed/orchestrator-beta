@@ -1,6 +1,8 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+# curl http://192.168.56.10:31444
+
 master_ip = "192.168.56.10"
 agent_ip = "192.168.56.11"
 

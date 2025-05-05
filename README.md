@@ -136,5 +136,6 @@ kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/con
 1) kubectl get all -n ingress-nginx
 
 ## Aprés le démarrage de master
-1) supprimer les pods pour les permettre de bien redémarrer
-2) 
+1) kubectl label node master ingress-ready=true (ajout du label au noeud master)
+2) kubectl rollout restart deployment ingress-nginx-controller -n ingress-nginx (redémarrer le déploiement ingress-nginx)
+3) 
