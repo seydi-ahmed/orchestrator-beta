@@ -25,11 +25,7 @@ kubectl apply -f /vagrant/manifests/billing-app/ || { echo "[!] Failed to deploy
 kubectl apply -f /vagrant/manifests/inventory-app/ || { echo "[!] Failed to deploy inventory-app"; exit 1; }
 kubectl apply -f /vagrant/manifests/api-gateway-app/ || { echo "[!] Failed to deploy api-gateway"; exit 1; }
 
-kubectl delete -A ValidatingWebhookConfiguration ingress-nginx-admission || true
-
 # 4. Appliquer les règles Ingress (en dernier)
 kubectl apply -f /vagrant/manifests/ingress/ingress.yaml || { echo "[!] Failed to deploy ingress rules"; exit 1; }
-
-kubectl apply -f /vagrant/manifests/ingress/ingress-nginx.yaml
 
 echo "[✓] All resources deployed to K3s cluster."
