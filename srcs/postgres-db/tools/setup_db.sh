@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# ./srcs/posgres-db/tools/setup_db.sh
+
 #check if database already configured
 if [ ! -d "/var/lib/postgresql/13/main/" ]; then
 
