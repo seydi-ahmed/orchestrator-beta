@@ -5,16 +5,26 @@ kind: StatefulSet
 metadata:
   name: billing-app
 spec:
+  serviceName: billing-app
+  replicas: 1
   selector:
     matchLabels:
       app: billing-app
-  serviceName: billing-app
-  replicas: 1
   template:
     metadata:
       labels:
         app: billing-app
     spec:
+      initContainers:
+        - name: wait-for-dependencies
+          image: busybox:1.28
+          command:
+            - sh
+            - -c
+            - |
+              until nslookup billing-db.default.svc.cluster.local && echo "billing-db OK"; do echo waiting for billing-db; sleep 5; done;
+              until nslookup rabbitmq.default.svc.cluster.local && echo "rabbitmq OK"; do echo waiting for rabbitmq; sleep 5; done;
+              sleep 10
       containers:
         - name: billing-app
           image: mouhameddiouf01/billing-app:latest

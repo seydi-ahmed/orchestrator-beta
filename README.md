@@ -92,26 +92,7 @@
 ## Utilisation:
 - ./orchestrator.sh
 - vagrant ssh master
-- vagrant/scripts/./deploy-all.sh
-
-## Code
-1) utiliser kubectl sans sudo
-- sudo chmod 644 /etc/rancher/k3s/k3s.yaml
-- export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
-2) déployer
-- /vagrant/scripts/./deploy-all.sh
-3) erreur
-```
-# Désinstaller Nginx Ingress (nettoyage)
-kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.9.4/deploy/static/provider/kind/deploy.yaml
-
-# Désactiver Traefik avant de réinstaller Nginx Ingress
-curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--disable traefik" sh -s -
-
-# Réinstaller Nginx Ingress
-sudo kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
-```
-
+- sudo bash /vagrant/scripts/./deploy-all.sh
 
 ## tu viens de le lister quelques étapes:
 1) Manque de ressources dans le cluster (CPU, mémoire).
@@ -130,6 +111,16 @@ kubectl delete clusterrolebinding ingress-nginx ingress-nginx-admission
 ```
 ```
 kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.9.4/deploy/static/provider/kind/deploy.yaml
+```
+```
+kubectl delete -f /vagrant/manifests/ingress/ingress-nginx.yaml
+kubectl delete -f /vagrant/manifests/secrets/
+kubectl delete -f /vagrant/manifests/databases/
+kubectl delete -f /vagrant/manifests/rabbitmq/
+kubectl delete -f /vagrant/manifests/billing-app/
+kubectl delete -f /vagrant/manifests/inventory-app/
+kubectl delete -f /vagrant/manifests/api-gateway-app/
+kubectl delete -f /vagrant/manifests/ingress/ingress.yaml
 ```
 
 ## Vérifier que tout est bien supprimé
