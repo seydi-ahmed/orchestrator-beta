@@ -141,7 +141,7 @@ Vagrant.configure("2") do |config|
     master.vm.synced_folder ".", "/vagrant", mount_options: ["dmode=777,fmode=666"]
     master.vm.hostname = "master"
     master.vm.provider "virtualbox" do |vb|
-      vb.memory = "4096"
+      vb.memory = "2048"
       vb.cpus = "2"
       vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
       vb.customize ["modifyvm", :id, "--nictype2", "virtio"]
@@ -154,7 +154,7 @@ Vagrant.configure("2") do |config|
     agent.vm.network "private_network", ip: agent_ip, auto_config: true
     agent.vm.hostname = "agent"
     agent.vm.provider "virtualbox" do |vb|
-      vb.memory = "2048"
+      vb.memory = "1024"
       vb.cpus = "1"
       vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
       vb.customize ["modifyvm", :id, "--nictype2", "virtio"]
