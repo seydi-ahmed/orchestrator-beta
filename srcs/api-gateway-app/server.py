@@ -1,5 +1,3 @@
-# ./srcs/api-gateway-app/server.py
-
 from app import create_app
 from waitress import serve
 
