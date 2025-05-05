@@ -5,6 +5,7 @@ kind: Ingress
 metadata:
   name: api-ingress
   annotations:
+    kubernetes.io/ingress.class: "traefik"
     traefik.ingress.kubernetes.io/router.middlewares: default-stripprefix@kubernetescrd
 spec:
   rules:
@@ -14,6 +15,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: api-gateway
+            name: api-gateway-app
             port:
               number: 3000

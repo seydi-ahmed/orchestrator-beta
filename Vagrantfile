@@ -30,7 +30,7 @@ master_script = <<-SHELL
     
     # Install K3s with specific version and debug options
     export INSTALL_K3S_VERSION="v1.28.5+k3s1"  # Using a known stable version
-    export INSTALL_K3S_EXEC="--disable=traefik \
+    export INSTALL_K3S_EXEC="\
       --bind-address=#{master_ip} \
       --node-external-ip=#{master_ip} \
       --flannel-iface=enp0s8 \
