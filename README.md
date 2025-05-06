@@ -113,14 +113,13 @@ kubectl delete clusterrolebinding ingress-nginx ingress-nginx-admission
 kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.9.4/deploy/static/provider/kind/deploy.yaml
 ```
 ```
-kubectl delete -f /vagrant/manifests/ingress/ingress-nginx.yaml
 kubectl delete -f /vagrant/manifests/secrets/
 kubectl delete -f /vagrant/manifests/databases/
 kubectl delete -f /vagrant/manifests/rabbitmq/
 kubectl delete -f /vagrant/manifests/billing-app/
 kubectl delete -f /vagrant/manifests/inventory-app/
 kubectl delete -f /vagrant/manifests/api-gateway-app/
-kubectl delete -f /vagrant/manifests/ingress/ingress.yaml
+kubectl delete -f /vagrant/manifests/ingress/
 ```
 
 ## Vérifier que tout est bien supprimé
