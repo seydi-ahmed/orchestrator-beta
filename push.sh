@@ -2,5 +2,5 @@ git config --global user.email "seydiahmedelcheikh@gmail.com"
 git config --global user.name "mouhameddiouf"
 git config credential.helper store
 git add .
-git commit -m "suppression de initcontainer"
+git commit -m "étapes à suivre aprés le démarrage des VM"
 git push --force
