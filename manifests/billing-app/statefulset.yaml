@@ -1,5 +1,3 @@
-# ./manifests/billing-app/statefulset.yaml
-
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -15,9 +13,17 @@ spec:
       labels:
         app: billing-app
     spec:
+      initContainers:
+        - name: wait-for-services
+          image: busybox
+          command: ['sh', '-c', 'nslookup billing-db && nslookup rabbitmq && sleep 2']
+          env: []
       containers:
         - name: billing-app
           image: mouhameddiouf01/billing-app:latest
+          imagePullPolicy: Always
+          command: ["/bin/sh"]
+          args: ["-c", "env && sleep 3600"]
           ports:
             - containerPort: 5000
           env:
@@ -51,3 +57,6 @@ spec:
                 secretKeyRef:
                   name: rabbitmq-secret
                   key: queue
+
+
+# ./manifests/billing-app/statefulset.yaml

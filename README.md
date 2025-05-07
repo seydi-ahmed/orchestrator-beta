@@ -133,3 +133,8 @@ kubectl delete -f /vagrant/manifests/ingress/
 2) kubectl rollout restart deployment ingress-nginx-controller -n ingress-nginx (redémarrer le déploiement ingress-nginx)
 3) sudo mkdir -p /var/lib/rancher/k3s/storage
 4) sudo chmod -R 777 /var/lib/rancher/k3s/storage
+5) kubectl -n kube-system get configmap coredns -o yaml > /tmp/coredns-fixed.yaml
+6) nano /tmp/coredns-fixed.yaml
+7) commentez "loop"
+8) kubectl apply -f /tmp/coredns-fixed.yaml
+9) 

@@ -23,6 +23,7 @@ spec:
       containers:
         - name: inventory-app
           image: mouhameddiouf01/inventory-app:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:
