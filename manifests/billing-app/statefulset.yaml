@@ -15,11 +15,6 @@ spec:
       labels:
         app: billing-app
     spec:
-      # initContainers:
-      #   - name: wait-for-services
-      #     image: busybox
-      #     command: ['sh', '-c', 'nslookup billing-db && nslookup rabbitmq && sleep 2']
-      #     env: []
       containers:
         - name: billing-app
           image: mouhameddiouf01/billing-app:latest

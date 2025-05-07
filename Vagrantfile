@@ -16,17 +16,27 @@ master_script = <<-SHELL
 
     # **********************posgre**************************
 
-    # Install PostgreSQL server and client
+    # Install and configure PostgreSQL
     apt-get install -y postgresql postgresql-client
     systemctl enable postgresql
     systemctl start postgresql
 
-    # Configure PostgreSQL for user01 access and database creation
+    # Create databases and user with both passwords
     sudo -u postgres psql <<EOSQL
+-- Create main user with inventory password
 CREATE USER user01 WITH PASSWORD 'postgres';
+
+-- Create databases
 CREATE DATABASE inventory_db OWNER user01;
 CREATE DATABASE billing_db OWNER user01;
+
+-- Update password for billing access
+ALTER USER user01 WITH PASSWORD 'password';
 EOSQL
+
+    # Allow remote connections
+    echo "host all all 0.0.0.0/0 md5" >> /etc/postgresql/*/main/pg_hba.conf
+    systemctl restart postgresql
 
     echo "=== PostgreSQL setup complete ==="
 

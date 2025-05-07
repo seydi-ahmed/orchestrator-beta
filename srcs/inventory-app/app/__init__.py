@@ -4,10 +4,16 @@ import os
 from app.extensions import db
 from app.movies import bp as bp_movies
 
+# DB_URI = (
+#     "postgresql://"
+#     f'{os.getenv("INVENTORY_DB_USER")}:{os.getenv("INVENTORY_DB_PASSWORD")}'
+#     f'@inventory-db:5432/{os.getenv("INVENTORY_DB_NAME")}'
+# )
+
 DB_URI = (
     "postgresql://"
     f'{os.getenv("INVENTORY_DB_USER")}:{os.getenv("INVENTORY_DB_PASSWORD")}'
-    f'@inventory-db:5432/{os.getenv("INVENTORY_DB_NAME")}'
+    f'@{os.getenv("INVENTORY_DB_HOST")}:5432/{os.getenv("INVENTORY_DB_NAME")}'
 )
 
 
