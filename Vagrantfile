@@ -35,8 +35,8 @@ EOSQL
     apt-get install -y curl iptables iproute2 net-tools jq
 
     # Create local-path provisioner directory required by Rancher's provisioner
-    mkdir -p /opt/local-path-provisioner
-    chmod -R 777 /opt/local-path-provisioner
+    # mkdir -p /opt/local-path-provisioner
+    # chmod -R 777 /opt/local-path-provisioner
 
     
     # Network configuration checks
@@ -104,6 +104,10 @@ agent_script = <<-SHELL
     # Install dependencies
     apt-get update
     apt-get install -y curl iptables iproute2 net-tools jq
+
+    # Create local-path provisioner directory required by Rancher's provisioner
+    # mkdir -p /opt/local-path-provisioner
+    # chmod -R 777 /opt/local-path-provisioner
     
     # Network checks
     echo "=== Network Configuration ==="
@@ -154,22 +158,28 @@ Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/focal64"
   config.vm.box_check_update = false
 
-  # Master configuration
-  config.vm.define "master", primary: true do |master|
-    master.vm.network "private_network", ip: master_ip, auto_config: true
-    # Remplacez cette ligne:
-    # master.vm.synced_folder ".", "/vagrant_shared", mount_options: ["dmode=777,fmode=666"]
-    # Par cette ligne:
-    master.vm.synced_folder ".", "/vagrant", mount_options: ["dmode=777,fmode=666"]
-    master.vm.hostname = "master"
-    master.vm.provider "virtualbox" do |vb|
-      vb.memory = "2048"
-      vb.cpus = "2"
-      vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
-      vb.customize ["modifyvm", :id, "--nictype2", "virtio"]
-    end
-    master.vm.provision "shell", inline: master_script
+# Master configuration
+config.vm.define "master", primary: true do |master|
+  master.vm.network "private_network", ip: master_ip, auto_config: true
+  master.vm.synced_folder ".", "/vagrant", mount_options: ["dmode=777,fmode=666"]
+  master.vm.hostname = "master"
+  
+  master.vm.provider "virtualbox" do |vb|
+    vb.memory = "2048"
+    vb.cpus = "2"
+    vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
+    vb.customize ["modifyvm", :id, "--nictype2", "virtio"]
   end
+
+  # Crée le dossier requis pour le local-path-provisioner sur le master uniquement
+  master.vm.provision "shell", inline: <<-SHELL
+    sudo mkdir -p /var/lib/rancher/k3s/storage
+    sudo chmod -R 777 /var/lib/rancher/k3s/storage
+  SHELL
+
+  master.vm.provision "shell", inline: master_script
+end
+
 
   # Agent configuration reste inchangé
   config.vm.define "agent" do |agent|

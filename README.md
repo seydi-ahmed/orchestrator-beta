@@ -125,7 +125,11 @@ kubectl delete -f /vagrant/manifests/ingress/
 ## Vérifier que tout est bien supprimé
 1) kubectl get all -n ingress-nginx
 
+## vérifier le chemin
+1) kubectl edit configmap local-path-config -n kube-system
+
 ## Aprés le démarrage de master
 1) kubectl label node master ingress-ready=true (ajout du label au noeud master)
 2) kubectl rollout restart deployment ingress-nginx-controller -n ingress-nginx (redémarrer le déploiement ingress-nginx)
-3) 
+3) sudo mkdir -p /var/lib/rancher/k3s/storage
+4) sudo chmod -R 777 /var/lib/rancher/k3s/storage
