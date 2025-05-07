@@ -19,7 +19,6 @@ spec:
       containers:
         - name: api-gateway
           image: mouhameddiouf01/api-gateway:latest
-          # imagePullPolicy: Always
           ports:
             - containerPort: 3000
           env:

@@ -1,3 +1,5 @@
+# ./manifests/billing-app/service.yaml
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -10,5 +12,3 @@ spec:
       port: 5000
       targetPort: 5000
   type: ClusterIP
-
-# ./manifests/billing-app/service.yaml

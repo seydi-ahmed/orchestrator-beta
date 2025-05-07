@@ -128,13 +128,16 @@ kubectl delete -f /vagrant/manifests/ingress/
 ## vérifier le chemin
 1) kubectl edit configmap local-path-config -n kube-system
 
+## supprimer tous les pods
+1) kubectl delete pod --all
+
 ## Aprés le démarrage de master
-1) kubectl label node master ingress-ready=true (ajout du label au noeud master)
-2) kubectl rollout restart deployment ingress-nginx-controller -n ingress-nginx (redémarrer le déploiement ingress-nginx)
+1) kubectl delete pod --all
+2) kubectl get svc pour vérifier puis déployer
 3) sudo mkdir -p /var/lib/rancher/k3s/storage
 4) sudo chmod -R 777 /var/lib/rancher/k3s/storage
 5) kubectl -n kube-system get configmap coredns -o yaml > /tmp/coredns-fixed.yaml
 6) nano /tmp/coredns-fixed.yaml
-7) commentez "loop"
+7) commentez "loop" ou supprimer la ligne
 8) kubectl apply -f /tmp/coredns-fixed.yaml
 9) 
