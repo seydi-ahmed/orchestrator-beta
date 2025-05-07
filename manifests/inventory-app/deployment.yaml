@@ -16,10 +16,6 @@ spec:
       labels:
         app: inventory-app
     spec:
-      # initContainers:
-      #   - name: wait-for-db
-      #     image: postgres:13-alpine
-      #     command: ['sh', '-c', 'until pg_isready -h inventory-db -p 5432; do echo "Waiting for DB..."; sleep 2; done']
       containers:
         - name: inventory-app
           image: mouhameddiouf01/inventory-app:latest
