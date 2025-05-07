@@ -24,6 +24,16 @@ spec:
           ports:
             - containerPort: 5000
           env:
+            - name: BILLING_DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: BILLING_DB_HOST
+            - name: BILLING_DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: BILLING_DB_PORT
             - name: BILLING_DB_USER
               valueFrom:
                 secretKeyRef:
@@ -54,3 +64,8 @@ spec:
                 secretKeyRef:
                   name: rabbitmq-secret
                   key: queue
+            - name: RABBITMQ_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: RABBITMQ_PORT

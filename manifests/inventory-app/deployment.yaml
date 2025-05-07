@@ -24,7 +24,15 @@ spec:
             - containerPort: 8080
           env:
             - name: INVENTORY_APP_PORT
-              value: "8080"
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: INVENTORY_APP_PORT
+            - name: INVENTORY_DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: INVENTORY_DB_HOST
             - name: INVENTORY_DB_USER
               valueFrom:
                 secretKeyRef:
@@ -40,8 +48,6 @@ spec:
                 secretKeyRef:
                   name: inventory-db-secret
                   key: dbname
-            - name: INVENTORY_DB_HOST # Ajoutez cette variable
-              value: "inventory-db"
           readinessProbe:
             httpGet:
               path: /health
