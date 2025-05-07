@@ -33,6 +33,11 @@ EOSQL
     # **********************posgre**************************
 
     apt-get install -y curl iptables iproute2 net-tools jq
+
+    # Create local-path provisioner directory required by Rancher's provisioner
+    mkdir -p /opt/local-path-provisioner
+    chmod -R 777 /opt/local-path-provisioner
+
     
     # Network configuration checks
     echo "=== Network Configuration ==="
