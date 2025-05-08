@@ -136,4 +136,6 @@ kubectl delete -f /vagrant/manifests/ingress/
 - nano /tmp/coredns-fixed.yaml
 - commentez "loop" ou supprimer la ligne
 - kubectl apply -f /tmp/coredns-fixed.yaml
+- kubectl delete pod --all
+- sudo kubectl apply -f /var/lib/rancher/k3s/server/manifests/coredns.yaml
 - 
