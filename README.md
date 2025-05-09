@@ -140,3 +140,10 @@ kubectl delete -f /vagrant/manifests/ingress/
 - kubectl delete pod --all
 - sudo kubectl apply -f /var/lib/rancher/k3s/server/manifests/coredns.yaml
 - 
+
+## Erreurs rencontrées
+- une variable d’environnement manquante,
+- un secret absent ou mal défini,
+- une erreur dans l’image Docker ou son entrypoint,
+- une ressource manquante (comme un volume ou un configmap),
+- ou encore une mauvaise syntaxe dans le manifest YAML.
