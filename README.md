@@ -147,3 +147,8 @@ kubectl delete -f /vagrant/manifests/ingress/
 - une erreur dans l’image Docker ou son entrypoint,
 - une ressource manquante (comme un volume ou un configmap),
 - ou encore une mauvaise syntaxe dans le manifest YAML.
+
+## Diagnostics
+- Le pod démarre trop tôt (avant que les services/objets soient connus).
+- Le nœud agent est lent à rejoindre le cluster.
+- Il y a un bug temporaire dans la gestion de l'état du nœud.
